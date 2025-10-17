@@ -1,10 +1,17 @@
 package org.acme;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import io.fabric8.kubernetes.api.model.ConfigMap;
 import io.fabric8.kubernetes.api.model.ObjectMetaBuilder;
 import io.javaoperatorsdk.operator.junit.LocallyRunOperatorExtension;
+import io.strimzi.api.kafka.Crds;
+import io.strimzi.api.kafka.model.kafka.Kafka;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
+
+import java.io.File;
+import java.io.IOException;
 
 import static org.acme.ConfigMapDependentResource.KEY;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -20,7 +27,20 @@ class GettingStartedReconcilerIntegrationTest {
     LocallyRunOperatorExtension extension =
             LocallyRunOperatorExtension.builder()
                     .withReconciler(GettingStartedReconciler.class)
+                    .withAdditionalCRD(kafkaCrd())
                     .build();
+
+    private String kafkaCrd() {
+        try {
+            File tempFile = File.createTempFile("kafkacrd", ".yaml");
+            ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+            mapper.writer().writeValue(tempFile, Crds.kafka());
+            return tempFile.getAbsolutePath();
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     @Test
     void testCRUDOperations() {

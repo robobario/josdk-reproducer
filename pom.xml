@@ -40,6 +40,11 @@
             <version>${josdk.version}</version>
         </dependency>
         <dependency>
+            <groupId>io.strimzi.</groupId>
+            <artifactId>api</artifactId>
+            <version>0.48.0</version>
+        </dependency>
+        <dependency>
             <groupId>io.javaoperatorsdk</groupId>
             <artifactId>operator-framework-junit-5</artifactId>
             <version>${josdk.version}</version>
